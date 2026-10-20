@@ -1,21 +1,419 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
+  <meta name="description" content="ASH: Agents that Self-Hone in Long-Horizon Worlds. An agentic system that learns a long-horizon policy from unlabeled, noisy internet video.">
+  <meta name="keywords" content="ASH, self-improving agents, inverse dynamics model, internet video, long-horizon, Pokemon Emerald, Legend of Zelda">
+  <title>ASH: Agents that Self-Hone in Long-Horizon Worlds</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Castoro&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.4/css/academicons.min.css">
+
   <style>
+    :root {
+      --text: #363636;
+      --muted: #6b6b6b;
+      --link: #3273dc;
+      --border: #e5e5e5;
+      --soft: #f5f5f5;
+      --accent: #ff7f41;
+      --btn: #363636;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: #fff;
+    }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+    .narrow { max-width: 820px; }
+
+    /* ---------- Hero ---------- */
+    .hero { padding: 48px 0 24px; text-align: center; }
+    .title {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-weight: 500;
+      font-size: 2.6rem;
+      line-height: 1.2;
+      margin: 0 0 20px;
+    }
+    .title .ash { color: var(--accent); font-weight: 700; }
+    .authors {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+    }
+    .authors span { display: inline-block; margin: 0 10px; }
+    .affiliations {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .affiliations span { display: inline-block; margin: 0 10px; }
+    .venue {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-size: 1.1rem;
+      margin: 6px 0 18px;
+    }
+    .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--btn); color: #fff;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      transition: background .15s;
+    }
+    .btn:hover { background: #000; text-decoration: none; }
+    .btn.disabled { opacity: .5; pointer-events: none; }
+
+    /* ---------- Video placeholder ---------- */
+    .video-wrap { margin: 28px auto 8px; }
+    .video-placeholder {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: repeating-linear-gradient(45deg, #ececec 0 14px, #f4f4f4 14px 28px);
+      border: 2px dashed #c8c8c8;
+      border-radius: 12px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #8a8a8a;
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+    }
+    .video-placeholder i { font-size: 4rem; margin-bottom: 10px; }
+    .video-placeholder span { font-size: 1.1rem; }
+
+    /* ---------- Sections ---------- */
+    section { padding: 32px 0; }
+    section + section { border-top: 1px solid var(--border); }
+    h2 {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-weight: 500;
+      font-size: 2rem;
       text-align: center;
-      padding: 60px;
-      background: #f5f5f5;
+      margin: 0 0 20px;
+    }
+    h3 {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-weight: 500;
+      font-size: 1.45rem;
+      margin: 36px 0 12px;
+    }
+    p { text-align: justify; margin: 0 0 14px; }
+
+    figure { margin: 24px 0; }
+    figure img { margin: 0 auto; border-radius: 4px; }
+    figcaption {
+      font-size: 0.92rem;
+      color: #4a4a4a;
+      text-align: justify;
+      margin-top: 10px;
+    }
+    figcaption .label { font-weight: 700; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .side-by-side { display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+
+    /* ---------- Method steps ---------- */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0 8px; }
+    .step {
+      background: var(--soft);
+      border-radius: 10px;
+      padding: 16px 18px;
+      border-top: 4px solid var(--accent);
+    }
+    .step h4 {
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+      font-weight: 500; font-size: 1.1rem; margin: 0 0 8px;
+    }
+    .step ol { margin: 0; padding-left: 20px; font-size: 0.93rem; }
+    .step li { margin-bottom: 6px; }
+    .step-note { text-align: center; font-size: 0.92rem; color: var(--muted); }
+
+    /* ---------- BibTeX ---------- */
+    pre {
+      background: var(--soft);
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 32px 0 48px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 720px) {
+      .title { font-size: 1.9rem; }
+      h2 { font-size: 1.6rem; }
+      .two-col, .side-by-side, .steps { grid-template-columns: 1fr; }
+      .side-by-side img { max-width: 300px; }
+      p, figcaption { text-align: left; }
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to My Website!</h1>
-  <p>This website is hosted on GitHub Pages.</p>
+
+<!-- ======================= HERO ======================= -->
+<header class="hero">
+  <div class="container">
+    <h1 class="title"><span class="ash">ASH</span>: Agents that Self-Hone in<br>Long-Horizon Worlds</h1>
+
+    <div class="authors">
+      <span>Benjamin Schneider<sup>1</sup></span>
+      <span>Xavier Schneider<sup>1</sup></span>
+      <span>Victor Zhong<sup>1</sup></span>
+      <span>Sun Sun<sup>2</sup></span>
+    </div>
+    <div class="affiliations">
+      <span><sup>1</sup>University of Waterloo</span>
+      <span><sup>2</sup>National Research Council Canada</span>
+    </div>
+    <div class="venue">NeurIPS 2026</div>
+
+    <div class="links">
+      <a class="btn" href="https://arxiv.org/pdf/2605.14211"><i class="fas fa-file-pdf"></i> Paper</a>
+      <a class="btn" href="https://arxiv.org/abs/2605.14211"><i class="ai ai-arxiv"></i> arXiv</a>
+      <a class="btn" href="https://github.com/Toolbox-HQ/ASH"><i class="fab fa-github"></i> Code</a>
+    </div>
+
+    
+    <div class="video-wrap" style="
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      overflow: hidden;
+    ">
+      <video autoplay muted loop playsinline style="
+        width: 100%;
+        height: auto;
+        display: block;
+      ">
+        <source src="static/videos/montage.mp4" type="video/mp4">
+      </video>
+    </div>
+
+  </div>
+</header>
+
+<main>
+
+<!-- ======================= ABSTRACT ======================= -->
+<section id="abstract">
+  <div class="container narrow">
+    <h2>Abstract</h2>
+    <p>
+      Long-horizon visuomotor tasks remain a fundamental challenge in AI, as current methods rely on hand-engineered rewards or action-labeled demonstrations, neither of which scales.
+      We introduce <b>ASH</b>, an agentic system that learns a long-horizon policy from unlabeled, noisy internet video, without reward shaping or expert annotation. ASH follows a self-improvement loop; when it gets stuck, ASH learns an <b>Inverse Dynamics Model (IDM)</b> from its own trajectories, and uses its IDM to extract supervision from relevant internet video. ASH uses unsupervised learning to identify key moments from large-scale internet video and retains them as <b>long-term memory</b> &mdash; allowing it to tackle long-horizon problems.
+      We evaluate ASH on two complementary environments demanding multi-hour planning: <i>Pok&eacute;mon Emerald</i>, a turn-based RPG, and <i>The Legend of Zelda: The Minish Cap</i>, a real-time action-adventure game.
+      In both games, behavioral cloning, retrieval-augmented and zero-shot foundation-model baselines plateau, while ASH sustains progression across our 8-hour evaluation.
+      ASH reaches an average of <b>11.2/12</b> milestones in Pok&eacute;mon Emerald and <b>9.9/12</b> in Legend of Zelda, while the strongest baseline gets stuck in both environments at an average of 9.3/12 and 7.8/12 milestones, respectively.
+      We demonstrate that self-improving agents are a scalable recipe for learning in long-horizon worlds.
+    </p>
+  </div>
+  <div class="container">
+    <figure>
+      <img src="static/images/teaser.png" alt="Skills ASH learns: battling trainers, catching Pokémon, healing Pokémon, collecting key items, sword fighting, blocking projectiles, finding power-ups and solving puzzles." loading="lazy">
+      <figcaption>
+        ASH self-improves over the course of a multi-hour playthrough by retrieving and learning from relevant internet video. In Pok&eacute;mon Emerald, ASH learns to battle trainers, catch Pok&eacute;mon, and heal its team at Pok&eacute;mon centers. In Zelda, ASH discovers how to wield a sword and apply game mechanics to solve puzzles. These skills compound, allowing ASH to achieve sustained progression.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ======================= INTRODUCTION ======================= -->
+<section id="introduction">
+  <div class="container narrow">
+    <h2>Introduction</h2>
+    <p>
+      Developing agents capable of mastering long-horizon, open-ended tasks remains a fundamental challenge in artificial intelligence: long-horizon agents must navigate complex, open-ended worlds over millions of steps, requiring multi-hour planning, fine-grained motor control, and the ability to adapt to new visual contexts.
+      <b>Behavioral Cloning (BC)</b> methods learn a policy from massive offline datasets, but assembling high-quality data at this scale requires domain knowledge and extensive human annotation, and a single trajectory may span hours, making it intractable to model dependencies across the full sequence.
+      <b>Reinforcement Learning (RL)</b> remains heavily dependent on dense reward engineering, and manually designing a reward function for every intermediate milestone is brittle, domain-specific, and labor intensive.
+      To address these limitations, we introduce <b>ASH</b>, an agentic system that follows a <b>dynamic bootstrap</b> loop. When ASH gets stuck, it searches for helpful demonstrations on the internet, and learns from them, using its IDM to label retrieved video and retaining key moments as <b>long-term memory</b>.
+    </p>
+  </div>
+</section>
+
+<!-- ======================= METHOD ======================= -->
+<section id="method">
+  <div class="container narrow">
+    <h2>ASH</h2>
+    <p>
+      ASH is analogous to a human that plays the game, gets stuck, and finds helpful video on the internet. We deploy <i>N</i> agents under a single shared policy &pi; conditioned on short- and long-term memory. A key-moment classifier, derived from internet data, is used to determine if an observation is a new key moment. When an observation is classified as a new key moment, it gets added to an agent's long-term memory and resets a per-agent stuck-timer. When any timer exceeds threshold &Delta;, ASH <i>dynamically bootstraps</i>: it uses the agents' trajectories to update the IDM, and to retrieve visually similar internet video. These observation-only videos are used to update the key-moment classifier. The IDM then labels the videos with pseudo-actions, producing trajectories that are used to update &pi;.
+    </p>
+  </div>
+  <div class="container">
+    <div class="steps">
+      <div class="step">
+        <h4>Step 1: Inference</h4>
+        <ol>
+          <li>Infer <i>N</i> agents in parallel under shared policy &pi;, conditioning each action on per-agent short-term and long-term memory.</li>
+          <li>On each step, detect new key moments and append them to that agent's long-term memory.</li>
+          <li>Halt when any agent fails to find a new key moment for &Delta; steps (<i>stuck</i>).</li>
+        </ol>
+      </div>
+      <div class="step">
+        <h4>Step 2: Retrieval</h4>
+        <ol>
+          <li>Embed agent trajectories with DINOv2.</li>
+          <li>Retrieve top-<i>k</i> visually similar videos from the internet corpus per trajectory, and union them into the retrieved dataset.</li>
+        </ol>
+      </div>
+      <div class="step">
+        <h4>Step 3: Bootstrapping</h4>
+        <ol>
+          <li>Update the key-moment classifier on the retrieved videos to discover new key moments.</li>
+          <li>Update the IDM on the agents' trajectories.</li>
+          <li>Update &pi; on the retrieved videos, using the IDM for pseudo-actions and key moments to construct long-term memory.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="step-note"><i class="fas fa-rotate-left"></i>&nbsp; Go to Step 1.</p>
+  </div>
+  <div class="container narrow">
+    <p>
+      <b>Dual memory.</b> In the long-horizon setting, a decision can hinge on information from many steps ago. ASH resolves this with a <i>dual memory</i>: a short-term memory of the most recent observation-action pairs for reactive control, and a long-term memory of observations that are the most recent <i>key moments</i>. Key moments are discovered by applying HDBSCAN clustering over the embeddings of retrieved internet video; each cluster aims to be a <i>single key moment</i> in the environment.
+    </p>
+  </div>
+</section>
+
+<!-- ======================= EXPERIMENTS ======================= -->
+<section id="experiments">
+  <div class="container narrow">
+    <h2>Experiments</h2>
+    <p>
+      We evaluate ASH on two complementary long-horizon environments: Pok&eacute;mon Emerald, a strategic turn-based RPG with a deep skill tree and dozens of hours of content, and <i>The Legend of Zelda: The Minish Cap</i>, an action-adventure game that demands real-time dexterity and puzzle solving. We evaluate our agents using <i>milestones</i>, which are human-defined markers of progress derived from online walkthroughs. We compare against <b>Voyager+Opus 5</b>, <b>VPT</b>, <b>Offline BC</b>, and a <b>Retrieval-augmented Embodied Agent (RAEA)</b>.
+    </p>
+
+    <h3>Performance on Milestones</h3>
+  </div>
+  <div class="container">
+    <figure>
+      <img src="static/images/Milestone_Figure.png" alt="Milestone success rates for ASH and baselines in Pokémon Emerald and Legend of Zelda." loading="lazy">
+      <figcaption>
+        Agent progress in <b>Pok&eacute;mon Emerald</b> (top) and <b>Legend of Zelda</b> (bottom), measured using milestone completion rates.
+        ASH is able to adapt and continue progressing throughout the 8-hour gameplay period.
+        While all methods are able to complete early milestones, only ASH can adapt to new areas, objectives, and mechanics.
+      </figcaption>
+    </figure>
+  </div>
+  <div class="container narrow">
+    <p>
+      <b>Self-improvement is necessary for sustained progression.</b>
+      Over the 8-hour evaluation, ASH reaches milestone 12 in both environments, while no baseline exceeds milestone 8 in Pok&eacute;mon or 6 in Zelda. VPT and offline BC plateau once the games introduce dynamics that are underrepresented in their training distribution.
+    </p>
+    <div class="side-by-side">
+      <div>
+        <p>
+          <b>ASH adapts to changing dynamics.</b>
+          The Zelda castle entrance is the cleanest example of a distribution-shift moment: the visual dynamics change abruptly, and VPT and offline BC, frozen at training time, devolve into random button-mashing and never exit the castle. ASH's policy also falters, but after a bootstrap is able to continue making progress. The same pattern appears in Pok&eacute;mon the moment the agent leaves the starting town and encounters the Pok&eacute;mon battling interface.
+        </p>
+        <p>
+          <b>Bootstrapping evolves new skills.</b>
+          ASH's initial checkpoint does not exhibit any ability to battle with Pok&eacute;mon. However, through bootstrapping, ASH becomes an adept battler. After hour 4, ASH wins <b>87%</b> of the Pok&eacute;mon battles it engages in. In the Legend of Zelda, ASH kills enemies with its sword in <b>75%</b> of trajectories. This capability is absent from its initial checkpoint and is not observed in any of our baselines.
+        </p>
+      </div>
+      <figure style="margin-top:0">
+        <img src="static/images/Visual_Dynamics.png" alt="Outside vs. inside of the Zelda castle." loading="lazy">
+        <figcaption>Outside (top) vs. inside (bottom) of the Zelda castle: offline policies collapse on this dynamics shift; ASH bootstraps and continues.</figcaption>
+      </figure>
+    </div>
+
+    <h3>Component Ablations and IDM Adaptation</h3>
+  </div>
+  <div class="container">
+    <figure>
+      <div class="two-col">
+        <img src="static/images/Ablation_Figure.png" alt="Component ablation on Pokémon Emerald." loading="lazy">
+        <img src="static/images/idm_acc.png" alt="IDM accuracy across bootstraps." loading="lazy">
+      </div>
+      <figcaption>
+        <span class="label">(Left)</span> Component ablation on Pok&eacute;mon Emerald: each addition (long-term memory, dynamic bootstrapping) yields a clear gain in milestones completed per GPU hour of online training. Shaded regions are one standard deviation over 4 trajectories per method. <span class="label">(Right)</span> IDM accuracy across bootstraps, evaluated on a test set. The dashed line is the pre-bootstrap initialization checkpoint.
+      </figcaption>
+    </figure>
+  </div>
+  <div class="container narrow">
+    <p>
+      By the end of the evaluation, ASH's long-memory component contributes 2.5 average milestones, and dynamic bootstrapping allows ASH to deploy compute more efficiently by only training when it gets stuck, contributing an additional 1.5 milestones.
+      The IDM also becomes better at labeling environment dynamics across bootstraps: the initialization checkpoint has just 60% accuracy on our test set, whereas our final IDM checkpoint achieves 81%.
+    </p>
+  </div>
+</section>
+
+<!-- ======================= PLAYTHROUGH EXAMPLES ======================= -->
+<section id="examples">
+  <div class="container narrow">
+    <h2>Playthrough Examples</h2>
+    <p style="text-align:center">Examples of how ASH uses <b>dynamic bootstrapping</b> and <b>long-term memory</b> to overcome roadblocks.</p>
+  </div>
+  <div class="container">
+    <figure>
+      <img src="static/images/Comic1.png" alt="Dynamic bootstrapping example: ASH learns to battle a wild Zigzagoon." loading="lazy">
+      <figcaption>
+        <span class="label">Dynamic bootstrapping example.</span> To complete milestone 2, the player must rescue the Professor from a wild Zigzagoon <b>(Panel 1)</b>. To accomplish this, the player must use their starter Pok&eacute;mon to defeat the Zigzagoon in battle <b>(Panel 2)</b>. However, ASH's initial policy does not know how to use the battle interface to command their Pok&eacute;mon. After being stuck for &Delta; steps (20 minutes), ASH <b>dynamically bootstraps</b>, and finds relevant examples of battling from internet video <b>(Panel 3)</b>. After updating its policy, ASH is able to attack and defeat the Zigzagoon <b>(Panels 4 &amp; 5)</b>. After learning how to battle, ASH is <b>unstuck</b> and continues on its journey <b>(Panel 6)</b>.
+      </figcaption>
+    </figure>
+    <figure>
+      <img src="static/images/Comic2.png" alt="Long-term memory example: ASH chooses the correct path in Oldale Town." loading="lazy">
+      <figcaption>
+        <span class="label">Long-term memory example.</span> When the player arrives in Oldale town <b>(Panel 1)</b>, they are presented with 3 possible next paths. <b>Option A:</b> The player heads north to Route 103 to meet their rival, May. <b>Option B:</b> The player has already met May, and should head back to the lab to meet the professor. Or <b>Option C:</b> The player has obtained the Pok&eacute;dex and should proceed to Route 102. However, <b>short-term memory is insufficient for this decision</b>, as short-term observations are nearly identical. From inspecting the agent's <b>long-term memory (Panel 3)</b>, it is clear that the player has just obtained their starter Pok&eacute;mon, and therefore ASH chooses <b>Option A</b> unambiguously <b>(Panel 4)</b>. After meeting May, the player's long-term memory has been updated with their encounter <b>(Panel 5)</b>, so it knows to choose <b>Option B</b> and head back to the lab <b>(Panel 6)</b>.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ======================= CONCLUSION ======================= -->
+<section id="conclusion">
+  <div class="container narrow">
+    <h2>Conclusion</h2>
+    <p>
+      We introduced ASH, an agent that self-improves by retrieving and learning from relevant internet video, without reward engineering or human annotation. Across Pok&eacute;mon Emerald and The Legend of Zelda, ASH continues to adapt beyond the point where behavioral cloning, retrieval-augmented, and foundation-model baselines stall, developing new skills such as battling, catching Pok&eacute;mon, and using a sword and shield. These results show that self-improving agents are a scalable path toward open-ended, long-horizon learning.
+    </p>
+  </div>
+</section>
+
+<!-- ======================= BIBTEX ======================= -->
+<section id="bibtex">
+  <div class="container narrow">
+    <h2>BibTeX</h2>
+<pre><code>@inproceedings{schneider2026ash,
+  title     = {ASH: Agents that Self-Hone in Long-Horizon Worlds},
+  author    = {Schneider, Benjamin and Schneider, Xavier and Zhong, Victor and Sun, Sun},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026},
+  eprint    = {2605.14211},
+  archivePrefix = {arXiv}
+}</code></pre>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    Website template inspired by <a href="https://nerfies.github.io/">Nerfies</a> and <a href="https://nitrogen.minedojo.org/">NitroGen</a>.
+  </div>
+</footer>
+
 </body>
 </html>
