@@ -1,0 +1,63 @@
+architecture: "ASH"
+lm_name_or_path: ASH/assets/Qwen3-1.7B
+vision_name_or_path: ASH/assets/siglip-base-patch16-224
+dino_name_or_path: ASH/assets/dinov2-base
+load_path: ASH/checkpoints/checkpoint-5/agent.safetensors
+objective_load_path: ASH/checkpoints/checkpoint-5/objective_manager.pkl
+output_dir: logs/online
+num_train_epochs: 3
+num_objectives: 10
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+save_strategy: "no"
+learning_rate: 5.0e-5
+weight_decay: 0.00001
+adam_beta2: 0.95
+warmup_ratio: 0.05
+lr_scheduler_type: "linear"
+logging_steps: 1
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+report_to: "wandb"
+eval_strategy: "steps"
+eval_steps: 0.25
+eval_steps: 0.0833333 # 0.0833333 ~= 0.25 * num_train_epochs => eval every ~0.25 epochs
+dataloader_num_workers: 8
+eval_on_start: true
+
+# inference
+inference_architecture: ASH
+agent_steps: 57600 # 4 hours of game time at 4 steps/s
+save_state: ASH/assets/truck_start.state
+sampling_strategy: temperature
+temperature: 1
+rom_path: ASH/rom/rom.gba
+online: True
+idm_data_sample_interval: 99999999999 # never sample idm data during pure inference
+idm_data_sample_steps: 100
+bootstrap_interval: 99999999999 # bootstrapping is off
+max_objective_interval: 99999999999
+context_length: 64
+actions_per_second: 4
+agent_fps: 2
+match_length: 540
+retrieved_videos: 100
+train_eval_split: 0.1
+
+# idm
+output_classes: 9
+idm_fps: 4
+idm_batch_size: 2
+idm_image_size: [128, 128]
+idm_epochs: 3
+idm_lr: 5.0e-5
+idm_weight_decay: 0
+idm_max_grad_norm: 1.0
+wandb_project: ash
+idm_gradient_accumulation_steps: 1
+idm_eval_every: 0.25
+idm_scheduler: null
+idm_output_path: .cache/chkpt_idm_model.pt
+idm_dataloaders_per_device: 4
+idm_path: ASH/checkpoints/checkpoint-5/idm.pt

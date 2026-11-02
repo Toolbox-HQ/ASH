@@ -1,0 +1,62 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=24:00:00
+#SBATCH --gpus-per-node=4
+#SBATCH --job-name=pokeagent_online
+#SBATCH --output=/scratch/%u/slurm_out/%j_pokeagent_online_output.txt
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=Benjamin.Schneider@uwaterloo.ca
+
+set -e
+# Container name (defaults to run.sif if not set)
+CONTAINER_NAME="${CONTAINER_NAME:-run.sif}"
+
+# Run UUID (defaults to container base name without .sif if not set)
+RUN_UUID="${RUN_UUID:-${CONTAINER_NAME%.sif}}"
+
+# Determine number of GPUs
+if [[ -n "$CUDA_VISIBLE_DEVICES" ]]; then
+    NUM_GPUS=$(echo "$CUDA_VISIBLE_DEVICES" | tr ',' '\n' | wc -l)
+else
+    NUM_GPUS=$(nvidia-smi -L | wc -l)
+fi
+
+EXTRA_ENV=""
+if [[ -n "${WANDB_API_KEY}" ]]; then
+    EXTRA_ENV="--env WANDB_API_KEY=${WANDB_API_KEY}"
+fi
+if [[ -n "${LZ_MODE}" ]]; then
+    EXTRA_ENV="${EXTRA_ENV} --env LZ_MODE=${LZ_MODE}"
+fi
+
+apptainer exec \
+    --contain \
+    --nv \
+    --bind ./.cache/tmp:/tmp \
+    --bind ./.cache:/app/.cache \
+    --bind ./checkpoints:/app/checkpoints \
+    --bind ./ASH:/app/ASH \
+    --bind ./logs:/app/logs \
+    --bind "${HF_HOME:-$HOME/.cache/huggingface}":/hf_cache \
+    --env HF_HOME=/hf_cache \
+    --env TRITON_HOME="/app/.cache/tmp" \
+    --env PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True" \
+    --env TRITON_CACHE_DIR="/app/.cache/tmp" \
+    --env CUPY_CACHE_DIR="/app/.cache/cupy" \
+    --env WANDB_MODE="offline" \
+    --env PYTHONUNBUFFERED=1 \
+    ${EXTRA_ENV:-} \
+    .cache/containers/${CONTAINER_NAME} \
+    bash -c "cd /app && . .venv/bin/activate && \
+        torchrun \
+          --nproc_per_node=$NUM_GPUS \
+          --nnodes=1 \
+          --node_rank=0 \
+          --master_addr=localhost \
+          --master_port=35332 \
+          main.py \
+          --config \"$1\" \
+          --uuid \"${RUN_UUID}\" \
+          --seed_rng \"false\"
+          "
+

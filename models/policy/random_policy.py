@@ -1,0 +1,34 @@
+from models.policy.policy import Policy
+from emulator.keys import KEY_TO_MGBA
+import random
+
+class RandomPolicy(Policy):
+
+    def __init__(self, exclude=None) -> None:
+        self.key_map = KEY_TO_MGBA.copy()
+        for key in (exclude or []):
+            del self.key_map[key]
+        self.action_queue = []
+
+    def enqueue_action(self) -> None:
+        num_presses = random.randint(150, 300)
+        button = random.choice(list(self.key_map.values()))
+        self.action_queue.extend([button for _ in range(num_presses)])
+
+    def get_action(self) -> list:
+        while not self.action_queue:
+            self.enqueue_action()
+        return self.action_queue.pop(0)
+
+class RandomMovementPolicy(RandomPolicy):
+
+    def enqueue_action(self) -> None:
+        num_presses = random.randint(150, 300)
+        MGBA_MOVEMENT_KEY_LIST = [
+            ["up"],
+            ["down"],
+            ["left"],
+            ["right"],
+        ]
+        button = random.choices(MGBA_MOVEMENT_KEY_LIST, weights=[1,1,1,1])[0]
+        self.action_queue.extend(button * num_presses)

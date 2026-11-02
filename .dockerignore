@@ -1,0 +1,7 @@
+.vscode
+.venv
+docker_build
+/Data
+checkpoints
+/wandb
+.cache
