@@ -14,7 +14,7 @@ H = 128
 W = 128
 DEVICE = "cuda:0"
 
-def load_model(chkpt=".cache/pokeagent/rnd_idm_model.pt") -> torch.nn.Module:
+def load_model(chkpt="ASH/assets/rnd_idm_model.pt") -> torch.nn.Module:
     model = IDModel()
     model.load_state_dict(torch.load(chkpt, map_location="cpu"))
     return model

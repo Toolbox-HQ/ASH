@@ -11,10 +11,10 @@ import os
 from models.util.data import save_json
 from models.util.misc import local_model_map
 from pathlib import Path
-# ./script/dino_embed.sh .cache/pokeagent/lz_internet_data .cache/lz/dinov2
-MODEL_PATH = local_model_map("facebook/dinov2-base")
-OUTPUT_DIR = ".cache/pokeagent/dinov2"
-INPUT_DIR = ".cache/pokeagent/internet_data"
+
+MODEL_PATH = local_model_map("ASH/assets/dinov2-base")
+OUTPUT_DIR = ".cache/dinov2"
+INPUT_DIR = ".cache/internet_data"
 
 def in_cache(path):
     filename = os.path.splitext(os.path.basename(path))[0]

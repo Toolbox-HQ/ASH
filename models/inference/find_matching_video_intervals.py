@@ -31,7 +31,7 @@ def process_batch(model, processor, path: str):
         image_embeds = image_embeds / image_embeds.norm(p=2, dim=-1, keepdim=True)
     return image_embeds
 
-def dino_embeddings_every(video_path: str, model_id: str = "facebook/dinov2-base"):
+def dino_embeddings_every(video_path: str, model_id: str = "ASH/assets/dinov2-base"):
     model_id = local_model_map(model_id)
     processor = AutoImageProcessor.from_pretrained(model_id)
     model = AutoModel.from_pretrained(model_id).eval()

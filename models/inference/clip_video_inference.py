@@ -8,7 +8,7 @@ import glob # Import glob for pattern matching files
 
 # --- CONFIGURATION ---
 # Note: Ensure MODEL_PATH is accessible or update to 'openai/clip-vit-base-patch32' for online download
-MODEL_PATH = "/home/bsch/.cache/huggingface/hub/models--openai--clip-vit-base-patch32/snapshots/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268"
+MODEL_PATH = "openai/clip-vit-base-patch32"
 # List of common video extensions to look for
 VIDEO_EXTENSIONS = ['*.mp4', '*.avi', '*.mov', '*.mkv']
 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--interval", type=float, default=2.0, help="Seconds between sampled frames")
     parser.add_argument("--batch_size", type=int, default=8, help="Batch size for inference")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device to run inference on (e.g., 'cuda' or 'cpu')")
-    parser.add_argument("--output_dir", type=str, default="./.cache/pokeagent/embeddings", help="Directory to save outputs")
+    parser.add_argument("--output_dir", type=str, default="./.cache/embeddings", help="Directory to save outputs")
     args = parser.parse_args()
 
     input_path = Path(args.input_path)

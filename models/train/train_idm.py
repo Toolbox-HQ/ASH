@@ -139,7 +139,7 @@ def train_idm_best_checkpoint(model: torch.nn.Module, cfg: IDMArguments, dataset
         scheduler = ConstantLR(optimizer, factor=1, total_iters=total_steps)
 
     run_uuid = get_shared_uuid()
-    tmp_ckpt_dir = os.path.join(".cache", "pokeagent", "tmp_checkpoints")
+    tmp_ckpt_dir = os.path.join(".cache", "tmp_checkpoints")
     if rank == 0:
         os.makedirs(tmp_ckpt_dir, exist_ok=True)
 

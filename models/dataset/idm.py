@@ -189,4 +189,4 @@ class IDMDataset(Dataset):
 if __name__ == "__main__":
     import sys
     assert len(sys.argv) == 2, "Please give the dataset and whether to filter (yes/no)"
-    ds = IDMDataset(sys.argv[1], s3_bucket="b4schnei", apply_filter=True, buffer_size = 20)
+    ds = IDMDataset(sys.argv[1], apply_filter=True, buffer_size = 20)

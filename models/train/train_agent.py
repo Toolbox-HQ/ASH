@@ -173,7 +173,7 @@ def get_objective_dataset_json(all_videos_json_files):
                     videos_json.append({"video_path": item["video_path"]})
     return videos_json
 
-def load_objective_dataset(videos_json, emb_dir=".cache/pokeagent/dinov2"):
+def load_objective_dataset(videos_json, emb_dir=".cache/dinov2"):
     per_frame_embed, per_frame_metadata = [], []
     for item in videos_json:
         video_id = Path(item["video_path"]).stem
@@ -192,7 +192,7 @@ def _mine_objectives_from_files(all_videos_json_files):
     if "LZ_MODE" in os.environ:
         emb_dir = ".cache/lz/dinov2"
     else:
-        emb_dir = ".cache/pokeagent/dinov2"
+        emb_dir = ".cache/dinov2"
 
     import torch.distributed as dist
     rank = dist.get_rank() if dist.is_initialized() else 0
@@ -294,7 +294,7 @@ def train_with_rollback(model: nn.Module, training_args: TrainingArguments, trai
 
     for param in model.parameters(): param.requires_grad = True
     trainer = Trainer(model=model, args=training_args, data_collator=OnlineAgentDataset.collate_fn, train_dataset=train_ds, eval_dataset=eval_ds)
-    trainer.rollback_on_overfit(".cache/pokeagent/tmp_checkpoints")
+    trainer.rollback_on_overfit(".cache/tmp_checkpoints")
     trainer.train()
     print(f"[RANK {dist.get_rank()} TRAINER] Agent training completes")
     trainer.run_rollback(model)

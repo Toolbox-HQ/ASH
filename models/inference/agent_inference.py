@@ -11,7 +11,7 @@ from models.util.misc import local_model_map
 import pickle
 import os
     
-class OnlinePokeagentStateActionConditionedObjective:
+class ASHOnlineAgent:
     def __init__(self,
                 model_args: ModelArguments,
                 training_args: TrainingArguments,

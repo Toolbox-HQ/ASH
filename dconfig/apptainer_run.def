@@ -49,8 +49,7 @@ From: ubuntu:24.04
     dconfig /app/
     emulator /app/
     models /app/
-    s3_utils /app/
-    script /app/
+    scripts /app/
     main.py /app/
     .git /app/
 
@@ -60,8 +59,8 @@ From: ubuntu:24.04
     uv sync
     
 %runscript
-    export TRITON_HOME="/app/.cache/pokeagent/tmp"
-    export TRITON_CACHE_DIR="/app/.cache/pokeagent/tmp"
+    export TRITON_HOME="/app/.cache/tmp"
+    export TRITON_CACHE_DIR="/app/.cache/tmp"
     cd /app
     . /app/env
     . .venv/bin/activate

@@ -138,7 +138,7 @@ def load_checkpoint(checkpoint_dir: str, agent, emulator, output_dir, query_path
     return steps, bootstrap_count, query_embeds, video_frames
 
 def run_online_agent(model_args, data_args, training_args, inference_args, idm_args, output_dir, run_uuid: str): 
-    from models.inference.agent_inference import OnlinePokeagentStateActionConditionedObjective
+    from models.inference.agent_inference import ASHOnlineAgent
     from emulator.emulator_connection import EmulatorConnection
     from tqdm import tqdm
     import numpy as np
@@ -161,7 +161,7 @@ def run_online_agent(model_args, data_args, training_args, inference_args, idm_a
     print(inference_args.inference_architecture)
     
     if inference_args.inference_architecture == "ASH":
-        agent = OnlinePokeagentStateActionConditionedObjective(model_args, training_args, data_args, inference_args, idm_args)
+        agent = ASHOnlineAgent(model_args, training_args, data_args, inference_args, idm_args)
     else:
         raise Exception(f"{inference_args.inference_architecture} is not supported")
     
@@ -178,7 +178,7 @@ def run_online_agent(model_args, data_args, training_args, inference_args, idm_a
     if os.environ.get('LZ_MODE'):
         dino_embedding_path = '.cache/lz/db_embeddings'
     else:
-        dino_embedding_path = '.cache/pokeagent/db_embeddings'
+        dino_embedding_path = '.cache/db_embeddings'
 
     conn = EmulatorConnection(inference_args.rom_path)
     conn.load_state(curr_state)

@@ -27,7 +27,7 @@ def get_embeddings(model, processor, path: str):
         image_embeds = image_embeds / image_embeds.norm(p=2, dim=-1, keepdim=True)
     return image_embeds.cpu(), frames
 
-def dino_embeddings_every(video_path: str, model_id: str = "facebook/dinov2-base", device=None):
+def dino_embeddings_every(video_path: str, model_id: str = "ASH/assets/dinov2-base", device=None):
     model_id = local_model_map(model_id)
     processor = AutoImageProcessor.from_pretrained(model_id, use_fast=True)
     model = AutoModel.from_pretrained(model_id).eval()

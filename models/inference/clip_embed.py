@@ -13,12 +13,12 @@ import os
 from util.data import save_json
 
 
-MODEL_PATH = "/scratch/bsch/hf_cache/hub/models--openai--clip-vit-base-patch32/snapshots/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268"
-OUTPUT_DIR = ".cache/pokeagent/clip32"
+MODEL_PATH = "openai/clip-vit-base-patch32"
+OUTPUT_DIR = ".cache/clip32"
 
 class EmbeddingDataset(Dataset):
     
-    def __init__(self, path=".cache/pokeagent/video_list.json"):
+    def __init__(self, path=".cache/video_list.json"):
         with open(path, "r") as f:
             self.video_list = json.loads(f.read())
 
@@ -52,10 +52,10 @@ class EmbeddingDataset(Dataset):
 
 
 def split():
-    path = ".cache/pokeagent/internet_data"
+    path = ".cache/internet_data"
     files = [str(p) for p in Path(path).iterdir() if p.is_file()]
     random.shuffle(files)
-    with open(".cache/pokeagent/video_list.json", "w") as f:
+    with open(".cache/video_list.json", "w") as f:
         json.dump(files, f)
 
 

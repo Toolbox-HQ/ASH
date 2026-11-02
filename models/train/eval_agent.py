@@ -66,7 +66,7 @@ def evaluate() -> None:
         model.load_state_dict(load_file(path))
 
         # TODO add eval strcutures to config
-        dataset = {"clock": LabelledWindowDataset(".cache/pokeagent/agent_eval_data/intervals_1f6ef6b5.json", processor = processor)}
+        dataset = {"clock": LabelledWindowDataset(".cache/agent_eval_data/intervals_1f6ef6b5.json", processor = processor)}
 
         trainer = Trainer(
             model=model, args=training_args, data_collator=OnlineAgentDataset.collate_fn, train_dataset=None, eval_dataset=dataset

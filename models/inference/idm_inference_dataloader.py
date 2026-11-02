@@ -20,7 +20,7 @@ WINDOW = 128  # non-overlapping IDM windows
 AGENT_FPS = 2
 AGENT_WINDOW = 64
 
-def load_model(chkpt=".cache/pokeagent/rnd_idm_model.pt"):
+def load_model(chkpt="ASH/assets/rnd_idm_model.pt"):
     m = IDModel(output_classes=NUM_ACTION_CLASSES)
     if chkpt.endswith(".safetensors"):
         from safetensors.torch import load_file
@@ -221,7 +221,7 @@ def infer_idm_labels(x, idm):
     logits = idm({"img": f}, labels=None, **dummy).logits  # (1, T, K)
     return torch.argmax(logits, dim=-1).squeeze(0).cpu()   # (T,)
 
-def get_idm_labeller(device, idm_path=".cache/pokeagent/rnd_idm_model.pt"):
+def get_idm_labeller(device, idm_path="ASH/assets/rnd_idm_model.pt"):
     idm = load_model(idm_path)
     idm.to(device)
     idm.eval()
@@ -268,7 +268,7 @@ def downsample_batched(x, stride):
 
 def main():
     idm = load_model()
-    loader = get_dataloader(".cache/pokeagent/intervals.json", batch_size=1, num_workers=0, shuffle=False)
+    loader = get_dataloader(".cache/intervals.json", batch_size=1, num_workers=0, shuffle=False)
 
     with torch.no_grad():
         for i, batch in enumerate(loader):
@@ -278,7 +278,7 @@ def main():
             agent_frames = downsample(x, 2)
             agent_labels = downsample(labels, 2)
 
-            save_mp4_with_keys(agent_frames, agent_labels, os.path.join(".cache/pokeagent/idm_videos", f"clip_{i:05d}.mp4"), AGENT_FPS)
+            save_mp4_with_keys(agent_frames, agent_labels, os.path.join(".cache/idm_videos", f"clip_{i:05d}.mp4"), AGENT_FPS)
             if i == 30:
                 break
 

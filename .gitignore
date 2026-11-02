@@ -28,7 +28,6 @@ emulator/agent_direct_save.state
 .cache
 .venv
 core.*
-slurm*
 scratch
 wandb
 __pycache__

@@ -54,7 +54,49 @@ Agents are evaluated with **milestones**, human-defined markers of progress deri
 
 ## Running ASH
 
-Instructions coming soon.
+The released agent plays Pokémon Emerald from the start of the game using one of the checkpoints on Hugging Face, with bootstrapping turned off. Everything runs inside an Apptainer container, so the only host requirements are:
+
+- Linux x86_64 with one or more NVIDIA GPUs and a recent driver. One agent runs per visible GPU.
+- [Apptainer](https://apptainer.org/docs/admin/main/installation.html) to build and run the container.
+- [uv](https://docs.astral.sh/uv/) (or the `hf` CLI) to download the weights.
+- A Pokémon Emerald ROM, which you must supply yourself. It is not distributed with ASH.
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/Toolbox-HQ/ASH.git
+cd ASH
+```
+
+**2. Download the weights**
+
+```bash
+scripts/download_weights.sh
+```
+
+This fetches the base models and start state plus `checkpoint-5` (about 15 GB in total) from [Toolbox-HQ/ASH](https://huggingface.co/Toolbox-HQ/ASH) into `./ASH/`, which is where `config/ash_inference.yaml` expects them. To use a different checkpoint, run `CHECKPOINT=10 scripts/download_weights.sh` and update the three checkpoint paths in the config.
+
+**3. Add the ROM**
+
+Copy your Pokémon Emerald ROM to `ASH/rom/rom.gba`.
+
+**4. Build the environment**
+
+```bash
+scripts/build_env.sh
+```
+
+This builds `.cache/containers/ash.sif` from `dconfig/apptainer_run.def`: an Ubuntu image with the mGBA emulator library, the Python environment installed by uv from `uv.lock`, and a copy of this repository at `/app`.
+
+**5. Run the agent**
+
+```bash
+scripts/run.sh config/ash_inference.yaml
+```
+
+The script launches one agent per visible GPU with `torchrun`. Restrict GPUs with `CUDA_VISIBLE_DEVICES`, for example `CUDA_VISIBLE_DEVICES=0 scripts/run.sh` for a single agent. Each run gets a UUID (override with `RUN_UUID=name`) and writes to `logs/online/<uuid>/`. The agents' gameplay recordings are saved there under `query_video/` as MP4 files with matching JSON action logs.
+
+The provided config runs for `agent_steps: 57600` steps, which is 4 hours of game time at 4 actions per second. Weights & Biases logging is offline by default; set `WANDB_MODE=online` and `WANDB_API_KEY` to log online, or `WANDB_MODE=disabled` to turn it off.
 
 ## Released models
 
@@ -92,8 +134,8 @@ models/
 └── util/        # distributed, reproducibility, and misc helpers
 emulator/        # mGBA emulator bindings (frame capture, input, save states, video)
 config/          # YAML run configurations
-script/          # SLURM / container launch scripts
-dconfig/         # Apptainer and Docker definitions
+scripts/         # download weights, build the container, run the agent
+dconfig/         # Apptainer container definitions
 ```
 
 ## Citation
