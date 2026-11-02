@@ -4,7 +4,7 @@
 [![Project Page](https://img.shields.io/badge/Project-Page-blue.svg)](https://toolbox-hq.github.io/ASH/)
 [![Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Toolbox--HQ%2FASH-yellow.svg)](https://huggingface.co/Toolbox-HQ/ASH)
 
-[Benjamin Schneider](https://benjaminschneider.ca/)<sup>1</sup>, [Xavier Schneider](https://www.linkedin.com/in/xavier-schneider-360860317/)<sup>1</sup>, [Victor Zhong](https://www.victorzhong.com/)<sup>1</sup>, Sun Sun<sup>2</sup>
+[Benjamin Schneider](https://benjaminschneider.ca/)<sup>1</sup>, [Xavier Schneider](https://www.linkedin.com/in/xavier-schneider-360860317/)<sup>1</sup>, [Victor Zhong](https://www.victorzhong.com/)<sup>1</sup>, [Sun Sun](https://sunsunyyl.github.io/)<sup>2</sup>
 
 <sup>1</sup>University of Waterloo &nbsp;&nbsp; <sup>2</sup>National Research Council Canada
 
